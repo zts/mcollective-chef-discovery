@@ -15,7 +15,7 @@ module MCollective
         Spice.server_url         = cfg.pluginconf["chef-discovery.server_url"]
         Spice.connection_options = { :ssl => {:verify => false} }
 
-        search_terms = []
+        search_terms = client.options[:discovery_options]
 
         unless filter["cf_class"].empty?
           filter["cf_class"].each do |c|
