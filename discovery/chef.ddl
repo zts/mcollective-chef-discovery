@@ -7,5 +7,5 @@ metadata    :name        => "chef",
             :timeout     => 0
 
 discovery do
-    capabilities :classes
+    capabilities :classes, :identity
 end

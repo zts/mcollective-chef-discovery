@@ -23,6 +23,11 @@ module MCollective
           end
         end
 
+        unless filter["identity"].empty?
+          terms = filter["identity"].map { |i| "name:" + i }
+          search_terms << '(' + terms.join(' OR ') + ')'
+        end
+          
         if search_terms.empty?
           nodes = Spice.nodes.map { |n| n.name }
         else

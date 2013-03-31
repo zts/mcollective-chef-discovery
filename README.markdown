@@ -4,9 +4,11 @@ MCollective discovery plugin that uses the Chef server as its data source.
 
 List all nodes on the server, or those matching a given search.
 
-Run list items passed to the -C option are converted to the correct
-format.
+The -C option matches run list items.  When specified more than once,
+only nodes matching every item will be discovered.
 
+The -I option matches against the Chef node name.  When the -I option
+is specified multiple times, nodes matching any item will be discovered.
 
 # Configuration #
 
@@ -24,6 +26,14 @@ All nodes in the Chef server:
 Only nodes with the graphite role:
 
     $ mco rpc rpcutil ping --dm chef -C 'role[graphite]'
+
+Only node names starting with 'm':
+
+    $ mco rpc rpcutil ping --dm chef -I 'm*'
+
+Only node names starting with 'm' or matching 'foo.example.com':
+
+    $ mco rpc rpcutil ping --dm chef -I 'm*' -I foo.example.com
 
 Arbitrary search expression:
 
