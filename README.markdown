@@ -14,7 +14,10 @@ is specified multiple times, nodes matching any item will be discovered.
 # Installation
 
 Copy chef.ddl and chef.rb to the discovery directory in your
-MCollective libdir.
+MCollective libdir.  You will need to install the `spice` and `chef`
+gems into the Ruby running mcollective.
+
+    $ gem install spice chef --no-rdoc --no-ri
 
 
 # Configuration #
@@ -24,30 +27,54 @@ This plugin takes its configuration from your Chef knife.rb.
 
 # Usage #
 
-All nodes in the Chef server:
+Select the Chef discovery plugin by including `--dm chef` on your mco
+commandline.  By default, this will discover all nodes in the Chef
+server.
+
+Example: 'mco ping' all nodes known to Chef
 
     $ mco rpc rpcutil ping --dm chef
 
-Only nodes with the graphite role:
+
+The `-C` option (config management class) discovers nodes that apply
+particular roles or recipes.  If this option is used more than once, a
+node must match every value to be discovered.
+
+Example: nodes applying the graphite role:
 
     $ mco rpc rpcutil ping --dm chef -C 'role[graphite]'
 
-Only node names starting with 'm':
+Example: nodes applying the graphite role AND mcollective::server recipe:
+
+    $ mco rpc rpcutil ping --dm chef -C 'role[graphite]' -C 'role[mcollective::server]'
+
+
+The `-I` option (identity) limits discovered nodes by their Chef node
+name.  Wildcards suitable for Chef search are permitted.  When this
+option is used more than once, nodes must match at least one value to
+be discovered.
+
+Example: node names starting with 'm':
 
     $ mco rpc rpcutil ping --dm chef -I 'm*'
 
-Only node names starting with 'm' or matching 'foo.example.com':
+Example: node 'foo.example.com', and node names starting with 'm':
 
     $ mco rpc rpcutil ping --dm chef -I 'm*' -I foo.example.com
 
-Arbitrary search expression:
 
-    $ mco rpc rpcutil ping --dm chef --do "role:one OR role:two"
+Finally, you can specify an arbitrary Chef search using the `--do`
+option.  Nodes matching the search, and any other filter criteria,
+will be discovered.
+
+Example: arbitrary search expression:
+
+    $ mco rpc rpcutil ping --dm chef --do "chef_environment:dev AND platform_family:debian"
 
 
 # TODO #
 
- * Support identity and fact criteria
+ * Support for fact (-F) criteria
  * Filter discovered nodes with identity regexp
  * Optionally specify Chef server configuration (instead of using
    knife.rb)
